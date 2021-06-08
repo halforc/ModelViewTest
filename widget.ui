@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,5,5">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -44,7 +44,39 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLineEdit" name="elValX"/>
+      <widget class="QLineEdit" name="elValX">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="elValY">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="elValZ">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox">
+       <item>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer">
@@ -59,6 +91,20 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="previousButton">
+       <property name="text">
+        <string>pre</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="nextButton">
+       <property name="text">
+        <string>next</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -68,8 +114,19 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QChartView" name="chartView" native="true"/>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QWidget</extends>
+   <header>qchartview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

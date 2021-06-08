@@ -19,6 +19,10 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+protected:
+    void setTable();
+    void setChartView();
+    void setMapper();
 protected slots:
     void on_pbSend_clicked();
     void on_pbAdd_clicked();
@@ -32,11 +36,10 @@ private:
     //UDP接收
 public slots:
     void receive();
-
 private:
     std::unique_ptr<QUdpSocket> uSocket;
 
-    std::unique_ptr<QDataWidgetMapper> mapper;
+    QDataWidgetMapper* mapper;
 
 };
 #endif // WIDGET_H

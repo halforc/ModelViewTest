@@ -1,4 +1,6 @@
 #include "mymodel.h"
+#include <QColor>
+
 int nPre = 0;
 void MyModel::add(const BombPara &val)
 {
@@ -28,13 +30,13 @@ void MyModel::reflashModel()
 MyModel::MyModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
-    header << "x" << "y" << "z" << "type" << "dis";
-    para.push_back(BombPara(0.1, 10.1, 5.4, 0, 0.2));
-    para.push_back(BombPara(0.2, 11.1, 6.4, 1, 0.3));
-    para.push_back(BombPara(0.3, 12.1, 7.4, 0, 0.4));
-    para.push_back(BombPara(0.4, 13.1, 8.4, 1, 0.6));
-    para.push_back(BombPara(0.5, 14.1, 9.4, 1, 0.8));
-    para.push_back(BombPara(0.6, 19.1, 11.4, 0, 1.0));
+    header << "t" << "x" << "y" << "z" << "type" << "dis";
+    para.push_back(BombPara(0.1, 1.1, 1.4, 0.2, 0));
+    para.push_back(BombPara(0.2, 1.5, 3.4, 0.3, 1));
+    para.push_back(BombPara(0.3, 2.1, 5.4, 0.4, 1));
+    para.push_back(BombPara(0.4, 3.1, 6.4, 0.6, 0));
+    para.push_back(BombPara(0.5, 4.1, 3.4, 0.8, 1));
+    para.push_back(BombPara(0.6, 9.1, 2.4, 1.0, 0));
     nPre = para.size();
 }
 
@@ -83,29 +85,87 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
 
     // FIXME: Implement me!
        // Q_REQUIRED_RESULT QString arg(double a, int fieldWidth = 0, char fmt = 'g', int prec = -1,
-    if(role == Qt::DisplayRole){
+    if(role == Qt::DisplayRole || role == Qt::EditRole){
         int row = index.row();
         int col = index.column();
         switch (col) {
         case 0:
-            return QString("%1").arg(para.at(row).x, 4, 'g', 4);
+            return QString("%1").arg(para.at(row).t, 4, 'g', 4);
         case 1:
-            return QString("%1").arg(para.at(row).y, 4, 'g', 4);
+            return QString("%1").arg(para.at(row).x, 4, 'g', 4);
         case 2:
-            return QString("%1").arg(para.at(row).z, 4, 'g', 4);
+            return QString("%1").arg(para.at(row).y, 4, 'g', 4);
         case 3:
-            return QString("%1").arg(para.at(row).type);
+            return QString("%1").arg(para.at(row).z, 4, 'g', 4);
         case 4:
-            return QString("%1").arg(para.at(row).distentPercent, 4, 'g', 4);
+            return QString("%1").arg(para.at(row).type);
         }
+    }else if (role == Qt::BackgroundRole) {
+        for (const QRect &rect : m_mapping) {
+            if (rect.contains(index.column(), index.row()))
+                return QColor(m_mapping.key(rect));
+        }
+        // cell not mapped return white color
+        return QColor(Qt::white);
     }
     return QVariant();
 }
 
-Qt::ItemFlags MyModel::flags(const QModelIndex &index) const
+bool MyModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!index.isValid())
-        return Qt::NoItemFlags;
+    if(index.isValid() && role == Qt::EditRole){
+            int row = index.row();
+            // contacts is a c++ struct
+            auto val = para.at(row);
+            if (index.column() == 0)
+                  val.t = value.toFloat();
+            else if (index.column() == 1)
+                  val.x = value.toFloat();
+            else if (index.column() == 2)
+                  val.y = value.toFloat();
+            else if (index.column() == 3)
+                  val.z = value.toFloat();
+            else
+                  return false;
 
-    return Qt::ItemIsEditable | Qt::ItemIsSelectable; // FIXME: Implement me!
+            para.replace(row, val);
+            emit dataChanged(index,index,{role});
+            return true;
+        }
+
+        return false;
+}
+
+
+bool MyModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    beginInsertRows(parent, row, row + count - 1);
+    // FIXME: Implement me!
+    endInsertRows();
+}
+
+bool MyModel::insertColumns(int column, int count, const QModelIndex &parent)
+{
+    beginInsertColumns(parent, column, column + count - 1);
+    // FIXME: Implement me!
+    endInsertColumns();
+}
+
+bool MyModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    beginRemoveRows(parent, row, row + count - 1);
+    // FIXME: Implement me!
+    endRemoveRows();
+}
+
+bool MyModel::removeColumns(int column, int count, const QModelIndex &parent)
+{
+    beginRemoveColumns(parent, column, column + count - 1);
+    // FIXME: Implement me!
+    endRemoveColumns();
+}
+
+void MyModel::addMapping(QString color, QRect area)
+{
+    m_mapping.insertMulti(color, area);
 }
